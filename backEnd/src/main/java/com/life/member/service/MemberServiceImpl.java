@@ -7,7 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.life.member.controller.MemberController;
 import com.life.member.dto.LoginDTO;
 import com.life.member.dto.LoginResponseDTO;
 import com.life.member.dto.SignupDTO;
@@ -37,7 +37,6 @@ public class MemberServiceImpl implements MemberService {
     // JWT 토큰 생성
     private final JwtUtil jwtUtil;
 
-
     // 6자리 인증코드 생성
     private String createCode() {
         return String.valueOf((int)(Math.random()*900000)+100000);
@@ -47,6 +46,8 @@ public class MemberServiceImpl implements MemberService {
     // 이메일 인증코드 발송
     @Override
     public void sendAuthCode(String email) {
+    	
+    	System.out.println("email - " + email);
 
         // 기존 인증코드 삭제 (재사용 방지)
         emailAuthMapper.deleteByEmail(email);
