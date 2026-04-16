@@ -7,9 +7,9 @@
 
     <insert id="insertMember">
         INSERT INTO MEMBER
-        (MEMBER_ID, EMAIL, PASSWORD, NAME, ROLE, STATUS)
+        (MEMBER_ID, EMAIL, PASSWORD, NAME, PHONE, ROLE, STATUS)
         VALUES
-        (SEQ_MEMBER.NEXTVAL, #{email}, #{password}, #{name}, 1, 'ACTIVE')
+        (SEQ_MEMBER.NEXTVAL, #{email}, #{password}, #{name}, #{phone}, 1, 'ACTIVE')
     </insert>
 
     <select id="login" resultType="com.life.member.vo.MemberVO">

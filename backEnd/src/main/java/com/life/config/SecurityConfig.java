@@ -43,7 +43,8 @@ public class SecurityConfig {
                     "/api/member/login",
                     "/api/member/signup",
                     "/api/member/send-email",
-                    "/api/member/verify"
+                    "/api/member/verify",
+                    "/api/member/checkEmail"
                 ).permitAll()
 
                 // 🔒 관리자 전용 (나중에 ROLE 붙이면 사용)

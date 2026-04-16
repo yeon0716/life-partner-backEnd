@@ -2,6 +2,7 @@ package com.life.member.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,9 +41,21 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public String signup(@RequestBody SignupDTO dto) {
-        memberService.signup(dto);
-        return "회원가입 완료";
+    public ResponseEntity<?> signup(@RequestBody SignupDTO dto) {
+        try {
+            memberService.signup(dto);
+            return ResponseEntity.ok("SUCCESS");
+        } catch (RuntimeException e) {
+        	// 이메일 중복 에러 
+            if ("EMAIL_DUPLICATE".equals(e.getMessage())) {
+                return ResponseEntity.badRequest().body("EMAIL_DUPLICATE");
+            }
+            // 이메일 인증 에러
+            if ("EMAIL_NOT_VERIFIED".equals(e.getMessage())) {
+                return ResponseEntity.badRequest().body("EMAIL_NOT_VERIFIED");
+            }
+            return ResponseEntity.badRequest().body("FAIL");
+        }
     }
 
     

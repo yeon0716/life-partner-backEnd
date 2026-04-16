@@ -104,29 +104,32 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    // 회원가입
     @Override
     public int signup(SignupDTO dto) {
+        try {
+            // 이메일 인증 체크
+            if(emailAuthMapper.isVerified(dto.getEmail()) == 0) {
+                throw new RuntimeException("EMAIL_NOT_VERIFIED");
+            }
+            // 이메일 중복 체크
+            if(memberMapper.selectByEmail(dto.getEmail()) != null) {
+                throw new RuntimeException("EMAIL_DUPLICATE");
+            }
+            dto.setPassword(encoder.encode(dto.getPassword()));
 
-        if(emailAuthMapper.isVerified(dto.getEmail()) == 0) {
-            throw new RuntimeException("이메일 인증 필요");
+            int result = memberMapper.insertMember(dto);
+
+            if(result == 0) {
+                throw new RuntimeException("SIGNUP_FAIL");
+            }
+            return result;
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("ORA-00001")) {
+                throw new RuntimeException("EMAIL_DUPLICATE");
+            }
+            throw e;
         }
-
-        if(memberMapper.selectByEmail(dto.getEmail()) != null) {
-            throw new RuntimeException("이미 존재하는 이메일");
-        }
-
-        dto.setPassword(encoder.encode(dto.getPassword()));
-
-        int result = memberMapper.insertMember(dto);
-
-        if(result == 0) {
-            throw new RuntimeException("회원가입 실패");
-        }
-        
-        return result;
     }
-
 
     // 로그인 (JWT 발급)
     @Override
@@ -287,4 +290,11 @@ public class MemberServiceImpl implements MemberService {
 
         return result;
     }
+
+
+	@Override
+	public MemberVO selectByEmail(String email) {
+		// TODO Auto-generated method stub
+		return memberMapper.selectByEmail(email);
+	}
 }

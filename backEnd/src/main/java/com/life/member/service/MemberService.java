@@ -16,6 +16,8 @@ public interface MemberService {
 
     // 회원 기능
     int signup(SignupDTO dto);
+    
+    MemberVO selectByEmail(String email);
 
     LoginResponseDTO login(LoginDTO dto);
 
