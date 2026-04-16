@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.life.mapper.MemberMapper">
+
+    <insert id="insertMember">
+        INSERT INTO MEMBER
+        (MEMBER_ID, EMAIL, PASSWORD, NAME, ROLE, STATUS)
+        VALUES
+        (SEQ_MEMBER.NEXTVAL, #{email}, #{password}, #{name}, 1, 'ACTIVE')
+    </insert>
+
+    <select id="login" resultType="com.life.member.vo.MemberVO">
+        SELECT * FROM MEMBER
+        WHERE EMAIL = #{email}
+        AND PASSWORD = #{password}
+        AND STATUS = 'ACTIVE'
+    </select>
+
+    <select id="selectById" resultType="com.life.member.vo.MemberVO">
+        SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <select id="selectByEmail" resultType="com.life.member.vo.MemberVO">
+        SELECT * FROM MEMBER WHERE EMAIL = #{email}
+    </select>
+
+    <select id="findEmail" resultType="com.life.member.vo.MemberVO">
+        SELECT * FROM MEMBER
+        WHERE NAME = #{name}
+        AND PHONE = #{phone}
+    </select>
+
+    <update id="updateMember">
+        UPDATE MEMBER
+        SET NAME = #{name},
+            PHONE = #{phone}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE MEMBER
+        SET PASSWORD = #{password}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <update id="deleteMember">
+        UPDATE MEMBER
+        SET STATUS = 'INACTIVE'
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <select id="selectAll" resultType="com.life.member.vo.MemberVO">
+        SELECT * FROM MEMBER ORDER BY MEMBER_ID DESC
+    </select>
+
+    <update id="updateRole">
+        UPDATE MEMBER
+        SET ROLE = #{role}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE MEMBER
+        SET STATUS = #{status}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+</mapper>
