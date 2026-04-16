@@ -49,9 +49,6 @@ public class MemberServiceImpl implements MemberService {
     	
     	System.out.println("email - " + email);
 
-        // 기존 인증코드 삭제 (재사용 방지)
-        emailAuthMapper.deleteByEmail(email);
-
         String code = createCode();
 
         // DB에 인증코드 저장
@@ -86,7 +83,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean verifyCode(String email, String code) {
 
-        // 입력한 이메일과 코드로 DB 조회
         EmailAuthVO vo = new EmailAuthVO();
         vo.setEmail(email);
         vo.setAuthCode(code);
@@ -95,11 +91,9 @@ public class MemberServiceImpl implements MemberService {
 
         if(result != null) {
 
-            // 인증 성공 시 상태 변경 후 삭제 (재사용 방지)
             int update = emailAuthMapper.updateVerified(email);
-            int delete = emailAuthMapper.deleteByEmail(email);
 
-            if(update == 0 || delete == 0) {
+            if(update == 0) {
                 throw new RuntimeException("인증 처리 실패");
             }
 
@@ -114,17 +108,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public int signup(SignupDTO dto) {
 
-        // 이메일 인증 여부 확인
         if(emailAuthMapper.isVerified(dto.getEmail()) == 0) {
             throw new RuntimeException("이메일 인증 필요");
         }
 
-        // 이메일 중복 체크
         if(memberMapper.selectByEmail(dto.getEmail()) != null) {
             throw new RuntimeException("이미 존재하는 이메일");
         }
 
-        // 비밀번호 암호화
         dto.setPassword(encoder.encode(dto.getPassword()));
 
         int result = memberMapper.insertMember(dto);
@@ -132,10 +123,7 @@ public class MemberServiceImpl implements MemberService {
         if(result == 0) {
             throw new RuntimeException("회원가입 실패");
         }
-
-        // 인증 데이터 삭제
-        emailAuthMapper.deleteByEmail(dto.getEmail());
-
+        
         return result;
     }
 

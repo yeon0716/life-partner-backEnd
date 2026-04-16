@@ -15,5 +15,5 @@ public interface EmailAuthMapper {
 
     int isVerified(String email);
 
-    int deleteByEmail(String email);
+    int deleteByEmail(EmailAuthVO vo);
 }

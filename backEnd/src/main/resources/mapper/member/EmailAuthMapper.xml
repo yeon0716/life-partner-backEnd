@@ -34,7 +34,11 @@
     </select>
 
     <delete id="deleteByEmail">
-        DELETE FROM EMAIL_AUTH WHERE EMAIL = #{email}
+       UPDATE EMAIL_AUTH
+		SET AUTH_CODE = #{authCode},
+		    EXPIRE_TIME = SYSDATE + (5/1440),
+		    VERIFIED = 'N'
+		WHERE EMAIL = #{email}
     </delete>
 
 </mapper>
