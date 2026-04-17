@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.life.recipe.vo.RecipeBlockVO;
+import com.life.recipe.vo.RecipeCategoryVO;
 import com.life.recipe.vo.RecipeVO;
 
 import java.util.List;
@@ -19,8 +20,12 @@ public interface RecipeMapper {
 
     // 3. 레시피 리스트
     List<RecipeVO> selectRecipeList(@Param("keyword")String keyword,
+    								@Param("categoryId")Long categoryId,
     								@Param("start") int start, 
     								@Param("end") int end);
+    
+    // 🔥 카테고리 리스트 조회
+    List<RecipeCategoryVO> selectCategoryList();
 
     // 4. 레시피 상세
     RecipeVO selectRecipeDetail(@Param("recipeId") Long recipeId);

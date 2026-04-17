@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.life.recipe.mapper.RecipeMapper;
 import com.life.recipe.vo.RecipeBlockVO;
+import com.life.recipe.vo.RecipeCategoryVO;
 import com.life.recipe.vo.RecipeVO;
 
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,19 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeMapper recipeMapper;
 
-    // 목록
-    @Override
-    public List<RecipeVO> getRecipeList(String keyword, int page, int size) {
-        int start = (page - 1) * size + 1;
-        int end = page * size;
-        return recipeMapper.selectRecipeList(keyword, start, end);
-    }
-
+	@Override
+	public List<RecipeVO> getRecipeList(String keyword, Long categoryId, int page, int size) {
+		 int start = (page - 1) * size + 1;
+	        int end = page * size;
+	        return recipeMapper.selectRecipeList(keyword, categoryId, start, end);
+	}
+	
+	// 카테고리 가져오기
+	@Override
+	public List<RecipeCategoryVO> getCategoryList() {
+		return recipeMapper.selectCategoryList();
+	}
+	
     // 상세
     @Override
     public RecipeVO getRecipeDetail(Long recipeId) {
@@ -149,4 +155,5 @@ public class RecipeServiceImpl implements RecipeService {
 
         return "/images/default.png";
     }
+
 }

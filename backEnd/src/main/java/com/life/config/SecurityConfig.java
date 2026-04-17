@@ -56,13 +56,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
 
                 // ✅ 누구나 접근 가능
-                .requestMatchers(
-                    "/api/member/login",
-                    "/api/member/signup",
-                    "/api/member/send-email",
-                    "/api/member/verify",
-                    "/api/recipe"
-                ).permitAll()
+						/*
+						 * .requestMatchers( "/api/member/login", "/api/member/signup",
+						 * "/api/member/send-email", "/api/member/verify", "/api/recipes", "/images/**"
+						 * // 🔥 이거 추가 ).permitAll()
+						 */
+            		
+            		.requestMatchers("/api/**").permitAll()
 
                 // 🔒 관리자
                 .requestMatchers("/api/member/admin/**").hasRole("ADMIN")

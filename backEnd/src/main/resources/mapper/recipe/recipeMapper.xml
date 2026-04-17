@@ -5,27 +5,31 @@
 <mapper namespace="com.life.recipe.mapper.RecipeMapper">
 
 	<select id="selectRecipeList" resultType="com.life.recipe.vo.RecipeVO">
-	    SELECT *
-	    FROM (
-	        SELECT 
-	            ROWNUM RN,
-	            R.*
-	        FROM (
-	            SELECT 
-	                RECIPE_ID,
-	                MEMBER_ID,
-	                TITLE,
-	                THUMBNAIL_URL,
-	                CREATED_AT
-	            FROM RECIPE
-	          <if test="keyword != null and keyword != ''">
-	            	WHERE TITLE LIKE '%' || #{keyword} || '%'
-	            </if>
-	            ORDER BY RECIPE_ID DESC
-	        ) R
-	        WHERE ROWNUM <![CDATA[ <= ]]> #{end}
-	    )
-	    WHERE RN >= #{start}
+	    SELECT
+	        R.RECIPE_ID,
+	        R.MEMBER_ID,
+	        R.TITLE,
+	        R.THUMBNAIL_URL,
+	        R.CREATED_AT,
+	        C.CATEGORY_NAME
+	    FROM RECIPE R
+	    LEFT JOIN RECIPE_CATEGORY C
+	        ON R.CATEGORY_ID = C.CATEGORY_ID
+	    WHERE 1=1
+	
+	    <if test="keyword != null and keyword != ''">
+	        AND R.TITLE LIKE '%' || #{keyword} || '%'
+	    </if>
+	
+	    <if test="categoryId != null">
+	        AND R.CATEGORY_ID = #{categoryId}
+	    </if>
+	
+	    ORDER BY R.RECIPE_ID DESC
+	</select>
+	
+	<select id="selectCategoryList" resultType="com.life.recipe.vo.RecipeCategoryVO">
+		SELECT * FROM RECIPE_CATEGORY
 	</select>
 	
 	
@@ -38,11 +42,13 @@
 	    INSERT INTO RECIPE (
 	        RECIPE_ID,
 	        MEMBER_ID,
+	        CATEGORY_ID,
 	        TITLE,
 	        THUMBNAIL_URL
 	    ) VALUES (
 	        #{recipeId},
 	        #{memberId},
+	        #{categoryId},
 	        #{title},
 	        #{thumbnailUrl}
 	    )

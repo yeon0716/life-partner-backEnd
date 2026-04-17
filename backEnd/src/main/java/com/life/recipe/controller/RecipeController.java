@@ -22,6 +22,7 @@ import com.life.member.mapper.MemberMapper;
 import com.life.member.vo.MemberVO;
 import com.life.recipe.service.RecipeService;
 import com.life.recipe.vo.RecipeBlockVO;
+import com.life.recipe.vo.RecipeCategoryVO;
 import com.life.recipe.vo.RecipeVO;
 
 import lombok.RequiredArgsConstructor;
@@ -38,10 +39,16 @@ public class RecipeController {
     @GetMapping
     public ResponseEntity<List<RecipeVO>> getRecipeList(
     		@RequestParam(required = false) String keyword,
+    		@RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(recipeService.getRecipeList(keyword, page, size));
+        return ResponseEntity.ok(recipeService.getRecipeList(keyword, categoryId, page, size));
+    }
+    
+    @GetMapping("/categories")
+    public ResponseEntity<List<RecipeCategoryVO>> getCategories() {
+        return ResponseEntity.ok(recipeService.getCategoryList());
     }
 
     // ✅ 2. 상세 조회
