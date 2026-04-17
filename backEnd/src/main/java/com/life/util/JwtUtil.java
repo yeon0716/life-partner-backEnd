@@ -36,4 +36,17 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
+    
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
+                    .parseClaimsJws(token);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

@@ -1,7 +1,10 @@
 package com.life.config;
 
+import com.life.util.JwtAuthenticationFilter;
+import com.life.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,16 +16,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtUtil jwtUtil;
+
+    SecurityConfig(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
     // 🔐 비밀번호 암호화
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtil jwtUtil) {
+        return new JwtAuthenticationFilter(jwtUtil);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+            //  CORS 활성화 -- multipart 때문에 따로 추가해줘야함
+        	.cors(Customizer.withDefaults())  
+
             // 🔥 REST API 방식이면 CSRF 끔
             .csrf(csrf -> csrf.disable())
 
@@ -38,20 +55,27 @@ public class SecurityConfig {
             // 🔐 URL 권한 설정
             .authorizeHttpRequests(auth -> auth
 
-                // ✅ 누구나 접근 가능 (로그인/회원가입/이메일 인증)
+                // ✅ 누구나 접근 가능
                 .requestMatchers(
                     "/api/member/login",
                     "/api/member/signup",
                     "/api/member/send-email",
                     "/api/member/verify",
-                    "/api/member/checkEmail"
+                    "/api/member/recipe"
                 ).permitAll()
 
-                // 🔒 관리자 전용 (나중에 ROLE 붙이면 사용)
+                // 🔒 관리자
                 .requestMatchers("/api/member/admin/**").hasRole("ADMIN")
-
-                // 🔒 나머지는 로그인 필요
+                
+                // 🔒 나머지
                 .anyRequest().authenticated()
+                
+                
+            )
+        
+        	.addFilterBefore(
+                jwtAuthenticationFilter(jwtUtil),
+                UsernamePasswordAuthenticationFilter.class
             );
 
         return http.build();

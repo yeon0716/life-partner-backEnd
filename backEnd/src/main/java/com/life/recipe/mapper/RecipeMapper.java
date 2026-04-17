@@ -1,6 +1,7 @@
 package com.life.recipe.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.life.recipe.vo.RecipeBlockVO;
 import com.life.recipe.vo.RecipeVO;
@@ -11,29 +12,29 @@ import java.util.List;
 public interface RecipeMapper {
 
     // 1. 레시피 등록
-    void insertRecipe(RecipeVO recipe);
+    int insertRecipe(RecipeVO recipe);
 
-    // 2. 블록 등록 (여러 개)
-    void insertRecipeBlockList(List<RecipeBlockVO> list);
+    // 2. 블록 등록
+    int insertRecipeBlock(RecipeBlockVO block);
 
     // 3. 레시피 리스트
-    List<RecipeVO> selectRecipeList(int start, int end);
+    List<RecipeVO> selectRecipeList(@Param("keyword")String keyword,
+    								@Param("start") int start, 
+    								@Param("end") int end);
 
     // 4. 레시피 상세
-    RecipeVO selectRecipeDetail(Long recipeId);
+    RecipeVO selectRecipeDetail(@Param("recipeId") Long recipeId);
 
     // 5. 레시피 수정
-    void updateRecipe(RecipeVO recipe);
+    int updateRecipe(RecipeVO recipe);
 
     // 6. 블록 삭제
-    void deleteBlocksByRecipeId(Long recipeId);
+    int deleteBlocksByRecipeId(@Param("recipeId")Long recipeId);
 
     // 7. 레시피 삭제
-    void deleteRecipe(Long recipeId);
+    int deleteRecipe(@Param("recipeId")Long recipeId);
 
     // 8. 블록 내용 수정 (이미지 변경 등)
-    void updateBlockContent(RecipeBlockVO block);
+    int updateBlockContent(RecipeBlockVO block);
 
-    // 9. 검색
-    List<RecipeVO> searchRecipeList(String keyword, int start, int end);
 }
