@@ -17,9 +17,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeMapper recipeMapper;
 
-    // ======================
-    // 📌 목록
-    // ======================
+    // 목록
     @Override
     public List<RecipeVO> getRecipeList(String keyword, int page, int size) {
         int start = (page - 1) * size + 1;
@@ -27,17 +25,13 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeMapper.selectRecipeList(keyword, start, end);
     }
 
-    // ======================
-    // 📌 상세
-    // ======================
+    // 상세
     @Override
     public RecipeVO getRecipeDetail(Long recipeId) {
         return recipeMapper.selectRecipeDetail(recipeId);
     }
 
-    // ======================
-    // 📌 등록 (핵심)
-    // ======================
+    // 등록 (핵심)
     @Override
     @Transactional
     public int createRecipe(RecipeVO recipe) {

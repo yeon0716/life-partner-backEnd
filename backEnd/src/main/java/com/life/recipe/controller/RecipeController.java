@@ -37,7 +37,7 @@ public class RecipeController {
     // ✅ 1. 리스트 조회
     @GetMapping
     public ResponseEntity<List<RecipeVO>> getRecipeList(
-    		@RequestParam String keyword,
+    		@RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {

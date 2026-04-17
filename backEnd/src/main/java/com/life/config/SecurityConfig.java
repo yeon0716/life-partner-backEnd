@@ -61,7 +61,7 @@ public class SecurityConfig {
                     "/api/member/signup",
                     "/api/member/send-email",
                     "/api/member/verify",
-                    "/api/member/recipe"
+                    "/api/recipe"
                 ).permitAll()
 
                 // 🔒 관리자
