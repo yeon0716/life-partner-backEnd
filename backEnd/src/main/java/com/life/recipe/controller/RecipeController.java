@@ -144,7 +144,10 @@ public class RecipeController {
     
     @PostMapping("/{id}/like")
     public boolean toggleLike(@PathVariable Long id, Authentication authentication) {
-        Long memberId = (Long) authentication.getPrincipal();
+    	
+    	 String email = authentication.getName(); // ✅ 이걸로 바꿔
+
+         Long memberId = memberMapper.selectByEmail(email).getMemberId();
 
         return recipeService.toggleLike(memberId, id);
     }
