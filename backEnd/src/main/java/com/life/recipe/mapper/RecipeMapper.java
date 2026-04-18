@@ -42,4 +42,28 @@ public interface RecipeMapper {
     // 8. 블록 내용 수정 (이미지 변경 등)
     int updateBlockContent(RecipeBlockVO block);
 
+	// 레시피 좋아요 존재여부
+	int existsLike(@Param("memberId") Long memberId,
+	         @Param("recipeId") Long recipeId); 
+    
+	// 좋아요 등록
+	int insertLike(@Param("memberId") Long memberId,
+	            @Param("recipeId") Long recipeId);
+	
+	// 좋아요 삭제
+	int deleteLike(@Param("memberId") Long memberId,
+	            @Param("recipeId") Long recipeId);
+
+	// 레시피 북마크 존재여부
+	int existsBookmark(@Param("memberId") Long memberId,
+	                @Param("recipeId") Long recipeId);
+	
+	// 북마크 등록 
+	int insertBookmark(@Param("memberId") Long memberId,
+	                @Param("recipeId") Long recipeId);
+	
+	// 북마크 삭제
+	int deleteBookmark(@Param("memberId") Long memberId,
+	                @Param("recipeId") Long recipeId);
+
 }

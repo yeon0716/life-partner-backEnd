@@ -62,7 +62,8 @@ public class SecurityConfig {
 						 * // 🔥 이거 추가 ).permitAll()
 						 */
             		
-            		.requestMatchers("/api/**").permitAll()
+            		.requestMatchers("/api/**",
+            						"/images/**").permitAll()
 
                 // 🔒 관리자
                 .requestMatchers("/api/member/admin/**").hasRole("ADMIN")

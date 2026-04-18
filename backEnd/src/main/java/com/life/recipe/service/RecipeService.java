@@ -27,4 +27,11 @@ public interface RecipeService {
 
     // 이미지 수정 (블록 단위)
     int updateBlock(RecipeBlockVO block);
+    
+    // 레시피 좋아요
+    boolean toggleLike(Long memberId, Long recipeId);
+    
+    // 레시피 북마크
+    boolean toggleBookmark(Long memberId, Long recipeId);
+    
 }

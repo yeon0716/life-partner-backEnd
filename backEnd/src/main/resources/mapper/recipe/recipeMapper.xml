@@ -11,7 +11,11 @@
 	        R.TITLE,
 	        R.THUMBNAIL_URL,
 	        R.CREATED_AT,
-	        C.CATEGORY_NAME
+	        C.CATEGORY_NAME,
+	       (SELECT COUNT(*)
+		     FROM RECIPE_LIKE L
+		     WHERE L.RECIPE_ID = R.RECIPE_ID) AS LIKES
+	        
 	    FROM RECIPE R
 	    LEFT JOIN RECIPE_CATEGORY C
 	        ON R.CATEGORY_ID = C.CATEGORY_ID
@@ -32,6 +36,65 @@
 		SELECT * FROM RECIPE_CATEGORY
 	</select>
 	
+	<!-- 좋아요 존재 여부 -->
+    <select id="existsLike" resultType="int">
+        SELECT COUNT(*)
+        FROM RECIPE_LIKE
+        WHERE MEMBER_ID = #{memberId}
+        AND RECIPE_ID = #{recipeId}
+    </select>
+
+    <!-- 좋아요 추가 -->
+    <insert id="insertLike">
+        INSERT INTO RECIPE_LIKE (
+            LIKE_ID,
+            MEMBER_ID,
+            RECIPE_ID
+        )
+        VALUES (
+            SEQ_RECIPE_LIKE.NEXTVAL,
+            #{memberId},
+            #{recipeId}
+        )
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deleteLike">
+        DELETE FROM RECIPE_LIKE
+        WHERE MEMBER_ID = #{memberId}
+        AND RECIPE_ID = #{recipeId}
+    </delete>
+
+
+    <!-- 북마크 존재 여부 -->
+    <select id="existsBookmark" resultType="int">
+        SELECT COUNT(*)
+        FROM RECIPE_BOOKMARK
+        WHERE MEMBER_ID = #{memberId}
+        AND RECIPE_ID = #{recipeId}
+    </select>
+
+    <!-- 북마크 추가 -->
+    <insert id="insertBookmark">
+        INSERT INTO RECIPE_BOOKMARK (
+            BOOKMARK_ID,
+            MEMBER_ID,
+            RECIPE_ID
+        )
+        VALUES (
+            SEQ_RECIPE_BOOKMARK.NEXTVAL,
+            #{memberId},
+            #{recipeId}
+        )
+    </insert>
+
+    <!-- 북마크 삭제 -->
+    <delete id="deleteBookmark">
+        DELETE FROM RECIPE_BOOKMARK
+        WHERE MEMBER_ID = #{memberId}
+        AND RECIPE_ID = #{recipeId}
+    </delete>
+
 	
 	<!--레시피 등록 Recipe 테이블 -->
 	<insert id="insertRecipe" parameterType="com.life.recipe.vo.RecipeVO">

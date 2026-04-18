@@ -155,5 +155,33 @@ public class RecipeServiceImpl implements RecipeService {
 
         return "/images/default.png";
     }
+    
+    // 좋아요 추가&삭제
+    public boolean toggleLike(Long memberId, Long recipeId) {
+
+        int exists = recipeMapper.existsLike(memberId, recipeId);
+
+        if (exists > 0) {
+            recipeMapper.deleteLike(memberId, recipeId);
+            return false; // 취소됨
+        } else {
+            recipeMapper.insertLike(memberId, recipeId);
+            return true; // 추가됨
+        }
+    }
+    
+    // 북마크 추가 & 삭제
+    public boolean toggleBookmark(Long memberId, Long recipeId) {
+
+        int exists = recipeMapper.existsBookmark(memberId, recipeId);
+
+        if (exists > 0) {
+            recipeMapper.deleteBookmark(memberId, recipeId);
+            return false;
+        } else {
+            recipeMapper.insertBookmark(memberId, recipeId);
+            return true;
+        }
+    }
 
 }
