@@ -19,7 +19,7 @@ public interface MemberService {
     
     MemberVO selectByEmail(String email);
 
-    LoginResponseDTO login(LoginDTO dto);
+    MemberVO login(LoginDTO dto);
 
     MemberVO getMyInfo(Long memberId);
 

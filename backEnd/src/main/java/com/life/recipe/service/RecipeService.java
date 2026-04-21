@@ -9,10 +9,10 @@ import java.util.List;
 public interface RecipeService {
 
     // 리스트
-    List<RecipeVO> getRecipeList(String keyword, Long categoryId, int page, int size);
+    List<RecipeVO> getRecipeList(Long memberId, String keyword, Long categoryId, int page, int size);
 
     // 상세
-    RecipeVO getRecipeDetail(Long recipeId);
+    RecipeVO getRecipeDetail(Long memberId, Long recipeId);
     
     List<RecipeCategoryVO> getCategoryList();
 

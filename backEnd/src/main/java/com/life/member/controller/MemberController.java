@@ -1,6 +1,7 @@
 package com.life.member.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,13 +18,16 @@ import com.life.member.dto.LoginResponseDTO;
 import com.life.member.dto.SignupDTO;
 import com.life.member.service.MemberService;
 import com.life.member.vo.MemberVO;
-
+import com.life.util.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
 public class MemberController {
+
+    private final JwtUtil jwtUtil;
 
     private final MemberService memberService;
 
@@ -60,8 +64,18 @@ public class MemberController {
 
     
     @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody LoginDTO dto) {
-        return memberService.login(dto);
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+
+        MemberVO member = memberService.login(dto);
+
+        String accessToken = jwtUtil.createAccessToken(member.getEmail(), member.getMemberId());
+        String refreshToken = jwtUtil.createRefreshToken(member.getEmail());
+
+        return ResponseEntity.ok(Map.of(
+            "accessToken", accessToken,
+            "refreshToken", refreshToken,
+            "memberId", member.getMemberId()
+        ));
     }
 
     @GetMapping("/me")
@@ -97,6 +111,27 @@ public class MemberController {
     public String delete(@RequestParam Long memberId) {
         memberService.deleteMember(memberId);
         return "탈퇴 완료";
+    }
+    
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(HttpServletRequest request) {
+
+        String refreshToken = request.getHeader("Refresh-Token");
+
+        if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
+            return ResponseEntity.status(401).body("INVALID_REFRESH_TOKEN");
+        }
+
+        String email = jwtUtil.getEmail(refreshToken);
+
+        // 🔥 memberId 다시 조회 (중요)
+        MemberVO member = memberService.selectByEmail(email);
+
+        String newAccessToken = jwtUtil.createAccessToken(email, member.getMemberId());
+
+        return ResponseEntity.ok(Map.of(
+            "accessToken", newAccessToken
+        ));
     }
 
     // 관리자

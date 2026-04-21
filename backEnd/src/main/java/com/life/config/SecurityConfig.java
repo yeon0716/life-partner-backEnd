@@ -4,6 +4,7 @@ import com.life.util.JwtAuthenticationFilter;
 import com.life.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,26 +53,43 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
 
-            // 🔐 URL 권한 설정
             .authorizeHttpRequests(auth -> auth
 
-                // ✅ 누구나 접근 가능
-						/*
-						 * .requestMatchers( "/api/member/login", "/api/member/signup",
-						 * "/api/member/send-email", "/api/member/verify", "/api/recipes", "/images/**"
-						 * // 🔥 이거 추가 ).permitAll()
-						 */
-            		
-            		.requestMatchers("/api/**",
-            						"/images/**").permitAll()
+            	    // =========================
+            	    // PUBLIC (GET만 허용)
+            	    // =========================
+            	    .requestMatchers(HttpMethod.GET,
+            	            "/api/recipes/**"
+            	    ).permitAll()
 
-                // 🔒 관리자
-                .requestMatchers("/api/member/admin/**").hasRole("ADMIN")
-                
-                // 🔒 나머지
-                .anyRequest().authenticated()
-                
-                
+            	    .requestMatchers(
+            	            "/api/member/login",
+            	            "/api/member/signup",
+            	            "/api/member/send-email",
+            	            "/api/member/verify"
+            	    ).permitAll()
+
+            	    .requestMatchers("/images/**").permitAll()
+
+            	    // =========================
+            	    // PRIVATE (로그인 필요)
+            	    // =========================
+            	    .requestMatchers(HttpMethod.POST,
+            	            "/api/recipes/**"
+            	    ).authenticated()
+
+            	    .requestMatchers(HttpMethod.PUT,
+            	            "/api/recipes/**"
+            	    ).authenticated()
+
+            	    .requestMatchers(HttpMethod.DELETE,
+            	            "/api/recipes/**"
+            	    ).authenticated()
+
+            	    // fallback
+            	    .anyRequest().authenticated()
+            	
+              
             )
         
         	.addFilterBefore(

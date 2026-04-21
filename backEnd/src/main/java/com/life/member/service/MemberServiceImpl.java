@@ -133,32 +133,24 @@ public class MemberServiceImpl implements MemberService {
 
     // 로그인 (JWT 발급)
     @Override
-    public LoginResponseDTO login(LoginDTO dto) {
+    public MemberVO login(LoginDTO dto) {
 
-        // 이메일로 회원 조회
         MemberVO member = memberMapper.selectByEmail(dto.getEmail());
 
         if(member == null) {
             throw new RuntimeException("회원 없음");
         }
 
-        // 비밀번호 비교 (암호화)
         if(!encoder.matches(dto.getPassword(), member.getPassword())) {
             throw new RuntimeException("비밀번호 오류");
         }
 
-        // 계정 상태 확인
         if(!"ACTIVE".equals(member.getStatus())) {
             throw new RuntimeException("비활성 계정");
         }
 
-        // JWT 생성
-        String token = jwtUtil.createToken(member.getEmail());
-
-        // 토큰 + 사용자 정보 반환
-        return new LoginResponseDTO(token, member);
+        return member; // 🔥 토큰 생성 제거
     }
-
 
     // 내 정보 조회
     @Override
