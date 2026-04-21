@@ -113,13 +113,15 @@
 	    INSERT INTO RECIPE_INGREDIENT (
 	        INGREDIENT_ID,
 	        RECIPE_ID,
-	        NAME
+	        NAME,
+	        AMOUNT
 	    )
 	    VALUES
 	    (
 	         SEQ_RECIPE_INGREDIENT.NEXTVAL,
 	         #{recipeId},
-	         #{name}
+	         #{name},
+	         #{amount}
 	    )
 	</insert>
 	
@@ -172,9 +174,11 @@
         SELECT
             INGREDIENT_ID,
             RECIPE_ID,
-            NAME
+            NAME,
+            AMOUNT
         FROM RECIPE_INGREDIENT
         WHERE RECIPE_ID = #{recipeId}
+        order by INGREDIENT_ID
     </select>
 
 

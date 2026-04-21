@@ -32,6 +32,8 @@ public class RecipeServiceImpl implements RecipeService {
         List<RecipeVO> list = recipeMapper.selectRecipeList(
             memberId, keyword, categoryId, start, end
         );
+        
+        System.out.println("list --" + list);
 
         // null 방어 + 기본값 보정
         if (list != null) {
@@ -260,9 +262,16 @@ public class RecipeServiceImpl implements RecipeService {
     // =========================
     // 📌 좋아요
     // =========================
+    @Override
+    @Transactional
     public boolean toggleLike(Long memberId, Long recipeId) {
+    	
+    	 System.out.println("SERVICE -- memberId = " + memberId);
+    	 System.out.println("SERVICE -- recipeId = " + recipeId);
 
         int exists = recipeMapper.existsLike(memberId, recipeId);
+        
+        System.out.println("exists - " + exists);
 
         if (exists > 0) {
             recipeMapper.deleteLike(memberId, recipeId);
@@ -276,6 +285,8 @@ public class RecipeServiceImpl implements RecipeService {
     // =========================
     // 📌 북마크
     // =========================
+    @Override
+    @Transactional
     public boolean toggleBookmark(Long memberId, Long recipeId) {
 
         int exists = recipeMapper.existsBookmark(memberId, recipeId);

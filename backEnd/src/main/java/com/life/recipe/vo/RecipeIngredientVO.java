@@ -8,5 +8,6 @@ public class RecipeIngredientVO {
 	private Long ingredientId;
 	private Long recipeId;
 	private String name;
+	private String amount;
 
 }

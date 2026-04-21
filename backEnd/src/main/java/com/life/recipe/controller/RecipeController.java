@@ -39,46 +39,32 @@ public class RecipeController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            Authentication authentication
+            @AuthenticationPrincipal CustomPrincipal principal
     ) {
 
         Long memberId = null;
 
-        if (authentication != null && authentication.isAuthenticated()
-                && !"anonymousUser".equals(authentication.getPrincipal())) {
-
-            String email = authentication.getName();
-            MemberVO member = memberMapper.selectByEmail(email);
-            if (member != null) {
-                memberId = member.getMemberId();
-            }
+        if (principal != null) {
+            memberId = principal.getMemberId();
         }
+
+        System.out.println("memberId = " + memberId);
 
         return recipeService.getRecipeList(memberId, keyword, categoryId, page, size);
     }
-
     /* =========================
        2. 상세 (비로그인 OK)
     ========================= */
     @GetMapping("/{id}")
     public ResponseEntity<RecipeVO> getRecipeDetail(
             @PathVariable Long id,
-            Authentication authentication
+            @AuthenticationPrincipal CustomPrincipal principal
     ) {
+        Long memberId = (principal != null) ? principal.getMemberId() : null;
 
-        Long memberId = null;
-
-        if (authentication != null && authentication.isAuthenticated()
-                && !"anonymousUser".equals(authentication.getPrincipal())) {
-
-            String email = authentication.getName();
-            MemberVO member = memberMapper.selectByEmail(email);
-            if (member != null) {
-                memberId = member.getMemberId();
-            }
-        }
-
-        return ResponseEntity.ok(recipeService.getRecipeDetail(memberId, id));
+        return ResponseEntity.ok(
+            recipeService.getRecipeDetail(memberId, id)
+        );
     }
 
     /* =========================
@@ -195,6 +181,9 @@ public class RecipeController {
         if (principal == null) {
             throw new RuntimeException("로그인 필요");
         }
+        
+        System.out.println("id - " + id);
+        System.out.println("principal.getMemberId() - " + principal.getMemberId());
 
         recipeService.toggleLike(principal.getMemberId(), id);
 
