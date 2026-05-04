@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.life.account.mapper.AccountMapper">
+
+    <!-- 등록 -->
+    <insert id="insert">
+        <![CDATA[
+        INSERT INTO ACCOUNT_BOOK (
+            ACCOUNT_ID,
+            MEMBER_ID,
+            CATEGORY_ID,
+            TITLE,
+            CONTENT,
+            AMOUNT,
+            TYPE,
+            CREATED_AT
+        )
+        VALUES (
+            SEQ_ACCOUNT_BOOK.NEXTVAL,
+            #{memberId},
+            #{categoryId},
+            #{title},
+            #{content},
+            #{amount},
+            #{type},
+            SYSDATE
+        )
+        ]]>
+    </insert>
+
+    <!-- 전체 조회 -->
+    <select id="findAll" resultType="com.life.account.vo.AccountBookVO">
+        <![CDATA[
+        SELECT 
+            A.ACCOUNT_ID,
+            A.MEMBER_ID,
+            A.CATEGORY_ID,
+            C.CATEGORY_NAME,
+            A.TITLE,
+            A.CONTENT,
+            A.AMOUNT,
+            A.TYPE,
+            TO_CHAR(A.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT
+        FROM ACCOUNT_BOOK A
+        JOIN ACCOUNT_CATEGORY C
+            ON A.CATEGORY_ID = C.CATEGORY_ID
+        WHERE A.MEMBER_ID = #{memberId}
+        ORDER BY A.CREATED_AT DESC
+        ]]>
+    </select>
+
+    <!-- 오늘 -->
+    <select id="findToday" resultType="com.life.account.vo.AccountBookVO">
+        <![CDATA[
+        SELECT 
+            A.ACCOUNT_ID,
+            A.MEMBER_ID,
+            A.CATEGORY_ID,
+            C.CATEGORY_NAME,
+            A.TITLE,
+            A.CONTENT,
+            A.AMOUNT,
+            A.TYPE,
+            TO_CHAR(A.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT
+        FROM ACCOUNT_BOOK A
+        JOIN ACCOUNT_CATEGORY C
+            ON A.CATEGORY_ID = C.CATEGORY_ID
+        WHERE A.MEMBER_ID = #{memberId}
+          AND TRUNC(A.CREATED_AT) = TRUNC(SYSDATE)
+        ORDER BY A.CREATED_AT DESC
+        ]]>
+    </select>
+
+    <!-- 월별 -->
+    <select id="findByMonth" resultType="com.life.account.vo.AccountBookVO">
+        <![CDATA[
+        SELECT 
+            A.ACCOUNT_ID,
+            A.MEMBER_ID,
+            A.CATEGORY_ID,
+            C.CATEGORY_NAME,
+            A.TITLE,
+            A.CONTENT,
+            A.AMOUNT,
+            A.TYPE,
+            TO_CHAR(A.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT
+        FROM ACCOUNT_BOOK A
+        JOIN ACCOUNT_CATEGORY C
+            ON A.CATEGORY_ID = C.CATEGORY_ID
+        WHERE A.MEMBER_ID = #{memberId}
+          AND A.CREATED_AT >= TO_DATE(#{month} || '-01', 'YYYY-MM-DD')
+          AND A.CREATED_AT < ADD_MONTHS(TO_DATE(#{month} || '-01', 'YYYY-MM-DD'), 1)
+        ORDER BY A.CREATED_AT DESC
+        ]]>
+    </select>
+
+    <!-- 삭제 -->
+    <delete id="delete">
+        <![CDATA[
+        DELETE FROM ACCOUNT_BOOK
+        WHERE ACCOUNT_ID = #{accountId}
+        ]]>
+    </delete>
+
+    <!-- 수입 합계 -->
+    <select id="sumIncome" resultType="int">
+        <![CDATA[
+        SELECT NVL(SUM(AMOUNT),0)
+        FROM ACCOUNT_BOOK
+        WHERE MEMBER_ID = #{memberId}
+          AND TYPE = 'INCOME'
+          AND CREATED_AT >= TO_DATE(#{month} || '-01', 'YYYY-MM-DD')
+          AND CREATED_AT < ADD_MONTHS(TO_DATE(#{month} || '-01', 'YYYY-MM-DD'), 1)
+        ]]>
+    </select>
+
+    <!-- 지출 합계 -->
+    <select id="sumExpense" resultType="int">
+        <![CDATA[
+        SELECT NVL(SUM(AMOUNT),0)
+        FROM ACCOUNT_BOOK
+        WHERE MEMBER_ID = #{memberId}
+          AND TYPE = 'EXPENSE'
+          AND CREATED_AT >= TO_DATE(#{month} || '-01', 'YYYY-MM-DD')
+          AND CREATED_AT < ADD_MONTHS(TO_DATE(#{month} || '-01', 'YYYY-MM-DD'), 1)
+        ]]>
+    </select>
+
+    <!-- 카테고리 차트 -->
+    <select id="categorySum" resultType="com.life.account.dto.CategoryRatioDTO">
+        <![CDATA[
+        SELECT 
+            C.CATEGORY_NAME AS categoryName,
+            SUM(A.AMOUNT) AS amount
+        FROM ACCOUNT_BOOK A
+        JOIN ACCOUNT_CATEGORY C
+            ON A.CATEGORY_ID = C.CATEGORY_ID
+        WHERE A.MEMBER_ID = #{memberId}
+          AND A.TYPE = 'EXPENSE'
+          AND A.CREATED_AT >= TO_DATE(#{month} || '-01', 'YYYY-MM-DD')
+          AND A.CREATED_AT < ADD_MONTHS(TO_DATE(#{month} || '-01', 'YYYY-MM-DD'), 1)
+        GROUP BY C.CATEGORY_NAME
+        ORDER BY amount DESC
+        ]]>
+    </select>
+    
+    <!-- 이번달 카테고리 -->
+	<select id="currentCategorySum" resultType="com.life.account.dto.CategoryDeltaDTO">
+	    <![CDATA[
+	    SELECT C.CATEGORY_NAME AS categoryName,
+	           SUM(A.AMOUNT) AS current
+	    FROM ACCOUNT_BOOK A
+	    JOIN ACCOUNT_CATEGORY C ON A.CATEGORY_ID = C.CATEGORY_ID
+	    WHERE A.MEMBER_ID = #{memberId}
+	    AND A.TYPE = 'EXPENSE'
+	    AND A.CREATED_AT >= TO_DATE(#{currentMonth} || '-01', 'YYYY-MM-DD')
+	    AND A.CREATED_AT < ADD_MONTHS(TO_DATE(#{currentMonth} || '-01', 'YYYY-MM-DD'), 1)
+	    GROUP BY C.CATEGORY_NAME
+	    ]]>
+	</select>
+    
+    
+    <!-- 저번달 카테고리 -->
+	<select id="prevCategorySum" resultType="com.life.account.dto.CategoryDeltaDTO">
+	    <![CDATA[
+	    SELECT C.CATEGORY_NAME AS categoryName,
+	           SUM(A.AMOUNT) AS prev
+	    FROM ACCOUNT_BOOK A
+	    JOIN ACCOUNT_CATEGORY C ON A.CATEGORY_ID = C.CATEGORY_ID
+	    WHERE A.MEMBER_ID = #{memberId}
+	    AND A.TYPE = 'EXPENSE'
+	    AND A.CREATED_AT >= TO_DATE(#{prevMonth} || '-01', 'YYYY-MM-DD')
+	    AND A.CREATED_AT < ADD_MONTHS(TO_DATE(#{prevMonth} || '-01', 'YYYY-MM-DD'), 1)
+	    GROUP BY C.CATEGORY_NAME
+	    ]]>
+	</select>
+    
+
+</mapper>

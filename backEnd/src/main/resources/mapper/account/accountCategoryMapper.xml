@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.AccountCategoryMapper">
+
+    <!-- 등록 -->
+    <insert id="insert">
+        INSERT INTO ACCOUNT_CATEGORY (
+            CATEGORY_ID,
+            MEMBER_ID,
+            CATEGORY_NAME,
+            TYPE,
+            CREATED_AT
+        )
+        VALUES (
+            SEQ_ACCOUNT_CATEGORY.NEXTVAL,
+            #{memberId},
+            #{categoryName},
+            #{type},
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 전체 조회 -->
+    <select id="findAll" resultType="com.life.account.vo.AccountCategoryVO">
+        SELECT 
+            CATEGORY_ID,
+            MEMBER_ID,
+            CATEGORY_NAME,
+            TYPE,
+            TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT
+        FROM ACCOUNT_CATEGORY
+        WHERE MEMBER_ID = #{memberId}
+        ORDER BY CATEGORY_ID DESC
+    </select>
+
+    <!-- 타입별 -->
+    <select id="findByType" resultType="com.life.account.vo.AccountCategoryVO">
+        SELECT 
+            CATEGORY_ID,
+            MEMBER_ID,
+            CATEGORY_NAME,
+            TYPE,
+            TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT
+        FROM ACCOUNT_CATEGORY
+        WHERE MEMBER_ID = #{memberId}
+        AND TYPE = #{type}
+    </select>
+
+    <!-- 삭제 -->
+    <delete id="delete">
+        DELETE FROM ACCOUNT_CATEGORY
+        WHERE CATEGORY_ID = #{categoryId}
+    </delete>
+
+</mapper>

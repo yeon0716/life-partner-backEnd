@@ -75,11 +75,13 @@ public class SecurityConfig {
             	    // PRIVATE (로그인 필요)
             	    // =========================
             	    .requestMatchers(HttpMethod.POST,
-            	            "/api/recipes/**"
+            	            "/api/recipes/**",
+            	    		"/api/account/**"
             	    ).authenticated()
 
             	    .requestMatchers(HttpMethod.PUT,
-            	            "/api/recipes/**"
+            	            "/api/recipes/**",
+            	            "/api/account/**"
             	    ).authenticated()
 
             	    .requestMatchers(HttpMethod.DELETE,
