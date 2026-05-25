@@ -151,13 +151,13 @@
 	<select id="currentCategorySum" resultType="com.life.account.dto.CategoryDeltaDTO">
 	    <![CDATA[
 	    SELECT C.CATEGORY_NAME AS categoryName,
-	           SUM(A.AMOUNT) AS current
+	           SUM(A.AMOUNT) AS currentAmount
 	    FROM ACCOUNT_BOOK A
 	    JOIN ACCOUNT_CATEGORY C ON A.CATEGORY_ID = C.CATEGORY_ID
 	    WHERE A.MEMBER_ID = #{memberId}
 	    AND A.TYPE = 'EXPENSE'
-	    AND A.CREATED_AT >= TO_DATE(#{currentMonth} || '-01', 'YYYY-MM-DD')
-	    AND A.CREATED_AT < ADD_MONTHS(TO_DATE(#{currentMonth} || '-01', 'YYYY-MM-DD'), 1)
+	    AND A.CREATED_AT >= TO_DATE(#{month} || '-01', 'YYYY-MM-DD')
+	    AND A.CREATED_AT < ADD_MONTHS(TO_DATE(#{month} || '-01', 'YYYY-MM-DD'), 1)
 	    GROUP BY C.CATEGORY_NAME
 	    ]]>
 	</select>
@@ -167,7 +167,7 @@
 	<select id="prevCategorySum" resultType="com.life.account.dto.CategoryDeltaDTO">
 	    <![CDATA[
 	    SELECT C.CATEGORY_NAME AS categoryName,
-	           SUM(A.AMOUNT) AS prev
+	           SUM(A.AMOUNT) AS prevAmount
 	    FROM ACCOUNT_BOOK A
 	    JOIN ACCOUNT_CATEGORY C ON A.CATEGORY_ID = C.CATEGORY_ID
 	    WHERE A.MEMBER_ID = #{memberId}

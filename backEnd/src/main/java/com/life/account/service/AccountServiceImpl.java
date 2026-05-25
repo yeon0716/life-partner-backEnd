@@ -154,13 +154,13 @@ public class AccountServiceImpl implements AccountService {
         prevList.forEach(p -> {
             map.putIfAbsent(p.getCategoryName(), new CategoryDeltaDTO());
             map.get(p.getCategoryName()).setCategoryName(p.getCategoryName());
-            map.get(p.getCategoryName()).setPrev(p.getPrev());
+            map.get(p.getCategoryName()).setPrevAmount(p.getPrevAmount());
         });
 
         // delta 및 percent 계산
         map.values().forEach(c -> {
-            int current = c.getCurrent();
-            int prev = c.getPrev();
+            int current = c.getCurrentAmount();
+            int prev = c.getPrevAmount();
             c.setDelta(current - prev);
             c.setPercent(prev == 0 ? (current > 0 ? 100 : 0)
                     : (current - prev) * 100.0 / prev);

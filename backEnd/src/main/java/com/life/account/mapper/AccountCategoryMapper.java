@@ -11,7 +11,7 @@ public interface AccountCategoryMapper {
 	 // 카테고리 등록
     int insert(AccountCategoryVO vo);
 
-    // 전체 조회
+    // 카테고리 전체 조회
     List<AccountCategoryVO> findAll(Long memberId);
 
     // 타입별 조회

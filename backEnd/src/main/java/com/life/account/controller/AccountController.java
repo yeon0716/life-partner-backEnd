@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.life.account.service.AccountCategoryService;
 import com.life.account.service.AccountService;
 import com.life.account.vo.AccountBookVO;
+import com.life.account.vo.AccountCategoryVO;
 
 @RestController
 @RequestMapping("/api/account")
@@ -13,6 +15,7 @@ import com.life.account.vo.AccountBookVO;
 public class AccountController {
 
     private final AccountService accountService;
+    private final AccountCategoryService accountCategoryService;
 
     // =========================
     // ✅ 등록
@@ -105,4 +108,23 @@ public class AccountController {
     public ResponseEntity<?> compare(Long memberId, String month) {
         return ResponseEntity.ok(accountService.getMonthComparison(memberId, month));
     }
+    
+    /* 
+     * 
+     * 카테고리 영역
+     *  
+    */
+    
+    // 리스트
+    @GetMapping("/categoryList")
+    public ResponseEntity<?> getCategoryList(Long memberId) {
+        return ResponseEntity.ok(accountCategoryService.findAll(memberId));
+    }
+    
+    @PostMapping("/addCategory")
+    public ResponseEntity<?> addCategory(@RequestBody AccountCategoryVO vo) {
+        return ResponseEntity.ok(accountCategoryService.insert(vo));
+    
+    }
+  
 }
